@@ -126,7 +126,7 @@ def fit(
 
             if sample_idx%log_every == 0: 
                 mlflow.log_metric("Loss Positive Examples", loss.item(), step=sample_idx)
-                mlflow.log_metric("Loss Positive Examples", loss_neg.item(), step=sample_idx)
+                mlflow.log_metric("Loss Negative Examples", loss_neg.item(), step=sample_idx)
 
                 # ----- verbose stuff -----
                 if verbose>0: 
