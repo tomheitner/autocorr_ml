@@ -140,4 +140,4 @@ def fit(
                     
             if sample_idx%save_every == 0:
                 ckpt_save_path = f'./model_checkpoints/model_{str(datetime.now().date())}_ckpt_{sample_idx}.pt'
-                torch.save(model.state_dict, ckpt_save_path)
+                torch.save(model.state_dict(), ckpt_save_path)

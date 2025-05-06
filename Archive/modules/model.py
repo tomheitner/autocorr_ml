@@ -19,25 +19,21 @@ class FlatNet(nn.Module):
         num_channels_in=2,
         num_channels_mid=32,
         num_channels_fin=64,
-        conv_kernel_size=3,
-        conv_padding=2,
-        conv_dilation=1,
-        
         device=torch.device('cpu'),
     ):
         super().__init__()
         
         self.device = device
         
-        self.iNorm = nn.InstanceNorm1d(num_features=num_channels_in)
+        self.iNorm = nn.InstanceNorm1d(num_features=2)
         
         block_dict = OrderedDict([
             ('block1', ConvBlock(
             in_channels=num_channels_in,
             out_channels=num_channels_mid,
-            dilation=conv_dilation,
-            padding=conv_padding,
-            kernel_size=conv_kernel_size))
+            dilation=1,
+            padding=2,
+            kernel_size=3))
         ])
         
         for i in range(1, num_blocks-1):
@@ -45,18 +41,18 @@ class FlatNet(nn.Module):
                 (f'block{i+1}', ConvBlock(
                     in_channels=num_channels_mid,
                     out_channels=num_channels_mid,
-                    dilation=conv_dilation,
-                    padding=conv_padding,
-                    kernel_size=conv_kernel_size))
+                    dilation=1,
+                    padding=2,
+                    kernel_size=3))
             ])
            
         block_dict.update([
             (f'block{num_blocks}', ConvBlock(
             in_channels=num_channels_mid,
             out_channels=num_channels_fin,
-            dilation=conv_dilation,
-            padding=conv_padding,
-            kernel_size=conv_kernel_size))
+            dilation=1,
+            padding=2,
+            kernel_size=3))
         ])
         
         self.cnn = nn.Sequential(block_dict)
@@ -116,7 +112,6 @@ class ConvBlock(nn.Module):
         padding=1,
         dilation=1,
         maxpool_kernel_size=2,
-        drouput_p=0.2,
     ):
         super().__init__()
         
@@ -129,8 +124,6 @@ class ConvBlock(nn.Module):
             dilation=dilation,
         )
         
-        self.dropout = nn.Dropout1d(p=drouput_p)
-        
         
         self.activation = nn.LeakyReLU()
         
@@ -138,7 +131,6 @@ class ConvBlock(nn.Module):
     
     def forward(self, x):
         x = self.conv(x)
-        x = self.dropout(x)
         x = self.activation(x)
         x = self.pooling(x)
         return x
